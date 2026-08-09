@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: ecommerce.api
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  flyway:
+    enabled: true
+
