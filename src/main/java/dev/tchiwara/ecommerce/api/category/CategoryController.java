@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
@@ -27,6 +29,11 @@ public class CategoryController {
                 .buildAndExpand(response.getId())
                 .toUri();
         return ResponseEntity.created(uri).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(){
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
 }
