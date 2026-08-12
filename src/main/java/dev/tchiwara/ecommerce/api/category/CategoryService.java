@@ -5,6 +5,8 @@ import dev.tchiwara.ecommerce.api.category.dtos.CategoryResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -19,5 +21,14 @@ public class CategoryService {
 
         return categoryMapper.toDTO(savedCategory);
 
+    }
+
+    public List<CategoryResponseDTO> getAllCategories(){
+        List<Category> categories=categoryRepository.findAll();
+
+        return categories
+                .stream()
+                .map(categoryMapper::toDTO)
+                .toList();
     }
 }
