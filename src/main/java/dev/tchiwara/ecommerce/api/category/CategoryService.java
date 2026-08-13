@@ -2,7 +2,9 @@ package dev.tchiwara.ecommerce.api.category;
 
 import dev.tchiwara.ecommerce.api.category.dtos.CategoryRequestDTO;
 import dev.tchiwara.ecommerce.api.category.dtos.CategoryResponseDTO;
+import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,5 +32,13 @@ public class CategoryService {
                 .stream()
                 .map(categoryMapper::toDTO)
                 .toList();
+    }
+
+    public CategoryResponseDTO getCategoryById(Byte id){
+        var category=categoryRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Category with id " + id + " not found")
+                );
+        return categoryMapper.toDTO(category);
     }
 }
