@@ -41,4 +41,18 @@ public class CategoryService {
                 );
         return categoryMapper.toDTO(category);
     }
+
+    public CategoryResponseDTO updateCategory(
+            CategoryRequestDTO categoryRequestDTO,
+            Byte id
+    ){
+        var category=categoryRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Category with id " + id + " not found")
+                );
+
+        categoryMapper.updateCategory(categoryRequestDTO, category);
+        categoryRepository.save(category);
+        return categoryMapper.toDTO(category);
+    }
 }
