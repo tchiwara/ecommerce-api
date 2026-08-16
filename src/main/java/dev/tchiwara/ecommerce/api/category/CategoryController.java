@@ -43,4 +43,13 @@ public class CategoryController {
             return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
+          @Valid  @RequestBody CategoryRequestDTO categoryRequestDTO,
+            @PathVariable Byte id
+    ){
+        var response=categoryService.updateCategory(categoryRequestDTO, id);
+        return ResponseEntity.ok(response);
+    }
+
 }
