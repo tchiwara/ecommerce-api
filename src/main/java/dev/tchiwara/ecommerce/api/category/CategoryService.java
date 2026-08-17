@@ -55,4 +55,12 @@ public class CategoryService {
         categoryRepository.save(category);
         return categoryMapper.toDTO(category);
     }
+
+    public void deleteCategory(Byte id){
+        var category=categoryRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Category with id " + id + " not found")
+                );
+        categoryRepository.delete(category);
+    }
 }
