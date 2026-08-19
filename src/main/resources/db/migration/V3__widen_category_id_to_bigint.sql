@@ -1,0 +1,4 @@
+ALTER TABLE products DROP FOREIGN KEY fk_category;
+ALTER TABLE products MODIFY COLUMN category_id BIGINT;
+ALTER TABLE categories MODIFY COLUMN id BIGINT AUTO_INCREMENT NOT NULL;
+ALTER TABLE products ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(id);
