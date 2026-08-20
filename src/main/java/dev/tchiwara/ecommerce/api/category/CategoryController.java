@@ -38,7 +38,7 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> getCategoryById(
-            @PathVariable Byte id
+            @PathVariable Long id
     ){
             return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
@@ -46,7 +46,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(
           @Valid  @RequestBody CategoryRequestDTO categoryRequestDTO,
-            @PathVariable Byte id
+            @PathVariable Long id
     ){
         var response=categoryService.updateCategory(categoryRequestDTO, id);
         return ResponseEntity.ok(response);
@@ -54,7 +54,7 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(
-            @PathVariable Byte id
+            @PathVariable Long id
     ){
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();

@@ -34,7 +34,7 @@ public class CategoryService {
                 .toList();
     }
 
-    public CategoryResponseDTO getCategoryById(Byte id){
+    public CategoryResponseDTO getCategoryById(Long id){
         var category=categoryRepository.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Category with id " + id + " not found")
@@ -44,7 +44,7 @@ public class CategoryService {
 
     public CategoryResponseDTO updateCategory(
             CategoryRequestDTO categoryRequestDTO,
-            Byte id
+            Long id
     ){
         var category=categoryRepository.findById(id)
                 .orElseThrow(
@@ -56,7 +56,7 @@ public class CategoryService {
         return categoryMapper.toDTO(category);
     }
 
-    public void deleteCategory(Byte id){
+    public void deleteCategory(Long id){
         var category=categoryRepository.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Category with id " + id + " not found")
