@@ -4,6 +4,8 @@ import dev.tchiwara.ecommerce.api.category.dtos.CategoryRequestDTO;
 import dev.tchiwara.ecommerce.api.category.dtos.CategoryResponseDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,8 +34,11 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories(){
-        return ResponseEntity.ok(categoryService.getAllCategories());
+    public ResponseEntity<PagedModel<CategoryResponseDTO>> getAllCategories(
+            @RequestParam(defaultValue = "0") int page
+    ){
+        Page<CategoryResponseDTO> categoryPage=categoryService.getAllCategories(page);
+        return ResponseEntity.ok(new PagedModel<>(categoryPage));
     }
 
     @GetMapping("/{id}")
