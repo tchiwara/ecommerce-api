@@ -4,6 +4,10 @@ import dev.tchiwara.ecommerce.api.category.dtos.CategoryRequestDTO;
 import dev.tchiwara.ecommerce.api.category.dtos.CategoryResponseDTO;
 import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +29,14 @@ public class CategoryService {
 
     }
 
-    public List<CategoryResponseDTO> getAllCategories(){
-        List<Category> categories=categoryRepository.findAll();
+    public Page<CategoryResponseDTO> getAllCategories(
+            int page
+    ){
+        Pageable pageable= PageRequest.of(page,10, Sort.by("name"));
+        Page<Category> categories=categoryRepository.findAll(pageable);
 
         return categories
-                .stream()
-                .map(categoryMapper::toDTO)
-                .toList();
+                .map(categoryMapper::toDTO);
     }
 
     public CategoryResponseDTO getCategoryById(Long id){
