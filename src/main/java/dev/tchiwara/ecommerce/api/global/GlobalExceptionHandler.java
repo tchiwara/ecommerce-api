@@ -1,5 +1,6 @@
 package dev.tchiwara.ecommerce.api.global;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,5 +41,14 @@ public class GlobalExceptionHandler {
         error.put("message", "Invalid value '" + ex.getValue() + "' for parameter: " + ex.getName());
         return ResponseEntity.badRequest().body(error);
     }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, String>> handleConstraintViolation(ConstraintViolationException ex) {
+        var error = new HashMap<String, String>();
+        error.put("message", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+
 
 }
