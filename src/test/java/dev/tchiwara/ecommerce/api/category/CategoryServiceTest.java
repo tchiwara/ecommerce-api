@@ -10,6 +10,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import dev.tchiwara.ecommerce.api.category.dtos.CategoryRequestDTO;
 import dev.tchiwara.ecommerce.api.category.dtos.CategoryResponseDTO;
+import org.springframework.data.domain.*;
+
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
@@ -54,5 +57,34 @@ public class CategoryServiceTest {
         verify(categoryMapper).toEntity(request);
         verify(categoryRepository).save(category);
         verify(categoryMapper).toDTO(savedCategory);
+    }
+
+    @Test
+    void shouldGetAllCategories() {
+
+        // Arrange
+        int page = 0;
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("name"));
+
+        Category category = new Category();
+        CategoryResponseDTO responseDTO = new CategoryResponseDTO(1L, "Electronics");
+
+        Page<Category> categoryPage = new PageImpl<>(List.of(category), pageable, 1);
+
+        when(categoryRepository.findAll(pageable))
+                .thenReturn(categoryPage);
+
+        when(categoryMapper.toDTO(category))
+                .thenReturn(responseDTO);
+
+        // Act
+        Page<CategoryResponseDTO> actual = categoryService.getAllCategories(page);
+
+        // Assert
+        assertEquals(1, actual.getTotalElements());
+        assertEquals(responseDTO, actual.getContent().get(0));
+
+        verify(categoryRepository).findAll(pageable);
+        verify(categoryMapper).toDTO(category);
     }
 }
