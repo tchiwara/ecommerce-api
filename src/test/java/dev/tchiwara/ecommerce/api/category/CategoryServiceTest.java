@@ -111,4 +111,33 @@ public class CategoryServiceTest {
         verify(categoryRepository).findById(id);
         verify(categoryMapper).toDTO(category);
     }
+
+    @Test
+    void shouldUpdateCategory() {
+
+        // Arrange
+        Long id = 1L;
+        CategoryRequestDTO request = new CategoryRequestDTO();
+        request.setName("Updated Electronics");
+
+        Category category = new Category();
+        CategoryResponseDTO expectedResponse = new CategoryResponseDTO(1L, "Updated Electronics");
+
+        when(categoryRepository.findById(id))
+                .thenReturn(Optional.of(category));
+
+        when(categoryMapper.toDTO(category))
+                .thenReturn(expectedResponse);
+
+        // Act
+        CategoryResponseDTO actual = categoryService.updateCategory(request, id);
+
+        // Assert
+        assertEquals(expectedResponse, actual);
+
+        verify(categoryRepository).findById(id);
+        verify(categoryMapper).updateCategory(request, category);
+        verify(categoryRepository).save(category);
+        verify(categoryMapper).toDTO(category);
+    }
 }
