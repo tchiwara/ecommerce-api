@@ -13,6 +13,7 @@ import dev.tchiwara.ecommerce.api.category.dtos.CategoryResponseDTO;
 import org.springframework.data.domain.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
@@ -85,6 +86,29 @@ public class CategoryServiceTest {
         assertEquals(responseDTO, actual.getContent().get(0));
 
         verify(categoryRepository).findAll(pageable);
+        verify(categoryMapper).toDTO(category);
+    }
+    @Test
+    void shouldGetCategoryById() {
+
+        // Arrange
+        Long id = 1L;
+        Category category = new Category();
+        CategoryResponseDTO expectedResponse = new CategoryResponseDTO(1L, "Electronics");
+
+        when(categoryRepository.findById(id))
+                .thenReturn(Optional.of(category));
+
+        when(categoryMapper.toDTO(category))
+                .thenReturn(expectedResponse);
+
+        // Act
+        CategoryResponseDTO actual = categoryService.getCategoryById(id);
+
+        // Assert
+        assertEquals(expectedResponse, actual);
+
+        verify(categoryRepository).findById(id);
         verify(categoryMapper).toDTO(category);
     }
 }
