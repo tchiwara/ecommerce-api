@@ -140,4 +140,22 @@ public class CategoryServiceTest {
         verify(categoryRepository).save(category);
         verify(categoryMapper).toDTO(category);
     }
+
+    @Test
+    void shouldDeleteCategory() {
+
+        // Arrange
+        Long id = 1L;
+        Category category = new Category();
+
+        when(categoryRepository.findById(id))
+                .thenReturn(Optional.of(category));
+
+        // Act
+        categoryService.deleteCategory(id);
+
+        // Assert
+        verify(categoryRepository).findById(id);
+        verify(categoryRepository).delete(category);
+    }
 }
