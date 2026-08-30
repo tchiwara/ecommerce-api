@@ -5,6 +5,10 @@ import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,7 +30,17 @@ private final ProductMapper productMapper;
     var savedProduct=productRepository.save(product);
 
     return productMapper.toDTO(savedProduct);
-
-
 }
+
+    public Page<ProductResponseDTO> getAllProducts(
+            int page
+    ){
+        Pageable pageable= PageRequest.of(page,10, Sort.by("name"));
+        Page<Product> products=productRepository.findAll(pageable);
+
+        return products
+                .map(productMapper::toDTO);
+    }
+
+
 }
