@@ -42,5 +42,12 @@ private final ProductMapper productMapper;
                 .map(productMapper::toDTO);
     }
 
+    public ProductResponseDTO getProductById(Long id){
+        var product=productRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Product with id " + id + " not found")
+                );
+        return productMapper.toDTO(product);
+    }
 
 }
