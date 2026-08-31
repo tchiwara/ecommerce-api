@@ -1,6 +1,9 @@
 package dev.tchiwara.ecommerce.api.product;
 
+import dev.tchiwara.ecommerce.api.category.Category;
 import dev.tchiwara.ecommerce.api.category.CategoryRepository;
+import dev.tchiwara.ecommerce.api.category.dtos.CategoryRequestDTO;
+import dev.tchiwara.ecommerce.api.category.dtos.CategoryResponseDTO;
 import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductResponseDTO;
@@ -49,5 +52,26 @@ private final ProductMapper productMapper;
                 );
         return productMapper.toDTO(product);
     }
+
+    public ProductResponseDTO updateProduct(
+            ProductRequestDTO productRequestDTO,
+            Long id
+    ){
+        Category category = categoryRepository.findById(productRequestDTO.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + productRequestDTO.getCategoryId() + " not found")
+                );
+
+        var product=productRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Product with id " + id + " not found")
+                );
+
+        product.setCategory(category);
+
+        productMapper.updateProduct(productRequestDTO, product);
+        productRepository.save(product);
+        return productMapper.toDTO(product);
+    }
+
 
 }
