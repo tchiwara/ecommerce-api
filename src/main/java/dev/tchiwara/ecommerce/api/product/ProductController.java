@@ -1,5 +1,6 @@
 package dev.tchiwara.ecommerce.api.product;
 
+import dev.tchiwara.ecommerce.api.category.dtos.CategoryRequestDTO;
 import dev.tchiwara.ecommerce.api.category.dtos.CategoryResponseDTO;
 import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductRequestDTO;
@@ -47,6 +48,15 @@ public class ProductController {
             @PathVariable Long id
     ){
         return ResponseEntity.ok(productService.getProductById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponseDTO> updateProduct(
+            @Valid  @RequestBody ProductRequestDTO productRequestDTO,
+            @PathVariable Long id
+    ){
+        var response=productService.updateProduct(productRequestDTO, id);
+        return ResponseEntity.ok(response);
     }
 
 }
