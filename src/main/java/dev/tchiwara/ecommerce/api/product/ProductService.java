@@ -73,5 +73,13 @@ private final ProductMapper productMapper;
         return productMapper.toDTO(product);
     }
 
+    public void deleteProduct(Long id){
+        var product=productRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Product with id " + id + " not found")
+                );
+        productRepository.delete(product);
+    }
+
 
 }
