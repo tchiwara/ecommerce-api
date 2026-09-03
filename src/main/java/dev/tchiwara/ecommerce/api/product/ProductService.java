@@ -2,8 +2,6 @@ package dev.tchiwara.ecommerce.api.product;
 
 import dev.tchiwara.ecommerce.api.category.Category;
 import dev.tchiwara.ecommerce.api.category.CategoryRepository;
-import dev.tchiwara.ecommerce.api.category.dtos.CategoryRequestDTO;
-import dev.tchiwara.ecommerce.api.category.dtos.CategoryResponseDTO;
 import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductResponseDTO;
