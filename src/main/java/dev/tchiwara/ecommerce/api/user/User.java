@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDateTime;
+import org.hibernate.annotations.Generated;
+import org.hibernate.generator.EventType;
+import java.time.Instant;
 
 @Entity
 @Getter
@@ -30,10 +32,12 @@ public class User {
     private String passwordHash;
 
     @Column(name = "created_at",updatable = false,insertable = false)
-    private LocalDateTime createdAt;
+    @Generated(event = EventType.INSERT)
+    private Instant createdAt;
 
     @Column(name = "updated_at",updatable = false,insertable = false)
-    private LocalDateTime updatedAt;
+    @Generated(event = {EventType.INSERT, EventType.UPDATE})
+    private Instant updatedAt;
 
     /*
      * insertable = false:
