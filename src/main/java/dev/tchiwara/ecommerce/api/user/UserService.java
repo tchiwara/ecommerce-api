@@ -3,6 +3,7 @@ package dev.tchiwara.ecommerce.api.user;
 import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import dev.tchiwara.ecommerce.api.user.dtos.UserRegisterRequestDTO;
 import dev.tchiwara.ecommerce.api.user.dtos.UserResponseDTO;
+import dev.tchiwara.ecommerce.api.user.dtos.UserUpdateRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -45,6 +46,21 @@ public class UserService {
                         () -> new ResourceNotFoundException("User with id " + id + " not found")
                         );
         return userMapper.toDto(user);
+    }
+
+    public UserResponseDTO updateUser(
+            UserUpdateRequestDTO userUpdateRequestDTO,
+            Long id
+    ){
+        var user=userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("User with id " + id + " not found")
+                );
+
+        userMapper.updateUser(userUpdateRequestDTO,user);
+        userRepository.save(user);
+        return userMapper.toDto(user);
+
     }
 
 }
