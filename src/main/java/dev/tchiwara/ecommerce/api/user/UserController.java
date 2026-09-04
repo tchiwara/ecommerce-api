@@ -2,6 +2,7 @@ package dev.tchiwara.ecommerce.api.user;
 
 import dev.tchiwara.ecommerce.api.user.dtos.UserRegisterRequestDTO;
 import dev.tchiwara.ecommerce.api.user.dtos.UserResponseDTO;
+import dev.tchiwara.ecommerce.api.user.dtos.UserUpdateRequestDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,15 @@ public class UserController {
             @PathVariable Long id
     ){
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> updateUser(
+            @Valid @RequestBody UserUpdateRequestDTO userUpdateRequestDTO,
+            @PathVariable Long id
+            ){
+        var response=userService.updateUser(userUpdateRequestDTO,id);
+        return ResponseEntity.ok(response);
     }
 
 }
