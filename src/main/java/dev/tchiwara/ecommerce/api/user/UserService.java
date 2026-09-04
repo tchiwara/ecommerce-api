@@ -1,5 +1,6 @@
 package dev.tchiwara.ecommerce.api.user;
 
+import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import dev.tchiwara.ecommerce.api.user.dtos.UserRegisterRequestDTO;
 import dev.tchiwara.ecommerce.api.user.dtos.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,14 @@ public class UserService {
 
         return users
                 .map(userMapper::toDto);
+    }
+
+    public UserResponseDTO getUserById(Long id){
+        var user=userRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("User with id " + id + " not found")
+                        );
+        return userMapper.toDto(user);
     }
 
 }
