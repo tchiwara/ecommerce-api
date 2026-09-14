@@ -16,6 +16,6 @@ import java.util.UUID;
 public class CartResponseDTO {
 
     private UUID cartId;
-    private List<CartItemResponse> items;
+    private List<CartItemResponseDTO> items;
     private BigDecimal total;
 }
