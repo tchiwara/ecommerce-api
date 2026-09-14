@@ -86,6 +86,17 @@ public class Cart {
 
     }
 
+    public static Cart newCartFor(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        Cart cart = new Cart();
+        cart.user = user;
+
+        return cart;
+    }
+
 }
 
 
