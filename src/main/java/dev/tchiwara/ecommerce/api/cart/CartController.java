@@ -22,4 +22,11 @@ public class CartController {
         return ResponseEntity.ok(cartService.addItem(userId, request));
     }
 
+    @GetMapping
+    public ResponseEntity<CartResponseDTO> getCart(
+            @RequestHeader("X-User-Id") Long userId) {
+
+        return ResponseEntity.ok(cartService.getCart(userId));
+    }
+
 }
