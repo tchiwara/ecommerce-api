@@ -9,6 +9,8 @@ import dev.tchiwara.ecommerce.api.user.User;
 import dev.tchiwara.ecommerce.api.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +34,21 @@ public class CartService {
         cart.addCartItem(product);
 
         return cartMapper.toResponse(cartRepository.save(cart));
+    }
+
+    public CartResponseDTO getCart(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
+
+        return cartRepository.findByUserId(userId)
+                .map(cartMapper::toResponse)
+                .orElseGet(this::emptyCartResponse);
+    }
+
+    private CartResponseDTO emptyCartResponse() {
+        CartResponseDTO response = new CartResponseDTO();
+        response.setItems(List.of());
+        response.setTotal(BigDecimal.ZERO.setScale(2));
+        return response;
     }
 }
