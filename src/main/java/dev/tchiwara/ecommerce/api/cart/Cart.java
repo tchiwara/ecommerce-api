@@ -97,6 +97,19 @@ public class Cart {
         return cart;
     }
 
+    public CartItem getCartItemOrThrow(Long productId) {
+        CartItem item = getCartItem(productId);
+        if (item == null) {
+            throw new ItemNotInCartException(productId);
+        }
+        return item;
+    }
+
+    public void removeCartItem(Long productId) {
+        CartItem item = getCartItemOrThrow(productId);
+        cartItems.remove(item);
+    }
+
 }
 
 
