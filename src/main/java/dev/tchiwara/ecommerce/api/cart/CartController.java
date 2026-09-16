@@ -39,4 +39,12 @@ public class CartController {
         return ResponseEntity.ok(cartService.updateQuantity(userId, productId, request));
     }
 
+    @DeleteMapping("/items/{productId}")
+    public ResponseEntity<CartResponseDTO> removeItem(
+            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable Long productId
+    ) {
+        return ResponseEntity.ok(cartService.removeItem(userId, productId));
+    }
+
 }
