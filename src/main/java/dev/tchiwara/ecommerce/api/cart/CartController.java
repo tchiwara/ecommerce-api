@@ -2,6 +2,7 @@ package dev.tchiwara.ecommerce.api.cart;
 
 import dev.tchiwara.ecommerce.api.cart.dtos.AddItemRequestDTO;
 import dev.tchiwara.ecommerce.api.cart.dtos.CartResponseDTO;
+import dev.tchiwara.ecommerce.api.cart.dtos.UpdateQuantityRequestDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,15 @@ public class CartController {
             @RequestHeader("X-User-Id") Long userId) {
 
         return ResponseEntity.ok(cartService.getCart(userId));
+    }
+
+    @PutMapping("/items/{productId}")
+    public ResponseEntity<CartResponseDTO> updateQuantity(
+            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable Long productId,
+            @Valid @RequestBody UpdateQuantityRequestDTO request
+    ) {
+        return ResponseEntity.ok(cartService.updateQuantity(userId, productId, request));
     }
 
 }
