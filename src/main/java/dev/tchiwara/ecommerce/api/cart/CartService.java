@@ -2,6 +2,7 @@ package dev.tchiwara.ecommerce.api.cart;
 
 import dev.tchiwara.ecommerce.api.cart.dtos.AddItemRequestDTO;
 import dev.tchiwara.ecommerce.api.cart.dtos.CartResponseDTO;
+import dev.tchiwara.ecommerce.api.cart.dtos.UpdateQuantityRequestDTO;
 import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import dev.tchiwara.ecommerce.api.product.Product;
 import dev.tchiwara.ecommerce.api.product.ProductRepository;
@@ -10,6 +11,7 @@ import dev.tchiwara.ecommerce.api.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -48,7 +50,22 @@ public class CartService {
     private CartResponseDTO emptyCartResponse() {
         CartResponseDTO response = new CartResponseDTO();
         response.setItems(List.of());
-        response.setTotal(BigDecimal.ZERO.setScale(2));
+        response.setTotal(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
         return response;
     }
+
+    public CartResponseDTO updateQuantity(Long userId, Long productId, UpdateQuantityRequestDTO request) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user " + userId));
+
+        CartItem item = cart.getCartItem(productId);
+        if (item == null) {
+            throw new ResourceNotFoundException("Product " + productId + " not in cart");
+        }
+        item.changeQuantity(request.getQuantity());
+
+        return cartMapper.toResponse(cartRepository.save(cart));
+    }
+
+
 }
