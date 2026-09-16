@@ -1,5 +1,6 @@
 package dev.tchiwara.ecommerce.api.global;
 
+import dev.tchiwara.ecommerce.api.cart.ItemNotInCartException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
-
+    @ExceptionHandler(ItemNotInCartException.class)
+    public ResponseEntity<Map<String, String>> handleItemNotInCart(ItemNotInCartException exception) {
+        var error = new HashMap<String, String>();
+        error.put("message", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 
 }
