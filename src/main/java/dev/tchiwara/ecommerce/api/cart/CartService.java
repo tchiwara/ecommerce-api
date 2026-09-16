@@ -58,14 +58,19 @@ public class CartService {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user " + userId));
 
-        CartItem item = cart.getCartItem(productId);
-        if (item == null) {
-            throw new ResourceNotFoundException("Product " + productId + " not in cart");
-        }
+        CartItem item = cart.getCartItemOrThrow(productId);
         item.changeQuantity(request.getQuantity());
 
         return cartMapper.toResponse(cartRepository.save(cart));
     }
 
+    public CartResponseDTO removeItem(Long userId, Long productId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user " + userId));
+
+        cart.removeCartItem(productId);
+
+        return cartMapper.toResponse(cartRepository.save(cart));
+    }
 
 }
