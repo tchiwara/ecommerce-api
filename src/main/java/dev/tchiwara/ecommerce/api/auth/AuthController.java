@@ -34,15 +34,17 @@ public class AuthController {
                 )
         );
 
-        var token = jwtService.generateToken(loginRequest.getEmail());
+        var user= userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+        var token = jwtService.generateToken(user);
         return ResponseEntity.ok(new JwtResponse(token));
     }
 
     /*the @AuthenticationPrincipal annotation is used to inject the currently authenticated
     user's principal directly into controller handler methods*/
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal String email){
-        var user=userRepository.findByEmail(email).orElse(null);
+    public ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal Long userId){
+
+        var user=userRepository.findById(userId).orElse(null);
         if(user==null) return ResponseEntity.notFound().build();
         var userDto=userMapper.toDto(user);
         return ResponseEntity.ok(userDto);
