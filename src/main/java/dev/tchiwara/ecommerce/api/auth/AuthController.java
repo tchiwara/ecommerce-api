@@ -44,7 +44,7 @@ public class AuthController {
 
         var cookie=new Cookie("refreshToken",refreshToken);
         cookie.setHttpOnly(true);
-        cookie.setPath("/auth/refresh");
+        cookie.setPath("/auth");
         cookie.setMaxAge(604800); // 7d
         cookie.setSecure(true);
         response.addCookie(cookie);
