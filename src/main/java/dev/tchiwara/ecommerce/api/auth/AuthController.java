@@ -5,6 +5,8 @@ import dev.tchiwara.ecommerce.api.auth.dtos.LoginRequest;
 import dev.tchiwara.ecommerce.api.user.UserMapper;
 import dev.tchiwara.ecommerce.api.user.UserRepository;
 import dev.tchiwara.ecommerce.api.user.dtos.UserResponseDTO;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +27,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> loginRequest(
-            @Valid @RequestBody LoginRequest loginRequest
+            @Valid @RequestBody LoginRequest loginRequest,
+            HttpServletResponse response
     ){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -35,8 +38,18 @@ public class AuthController {
         );
 
         var user= userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
-        var token = jwtService.generateToken(user);
-        return ResponseEntity.ok(new JwtResponse(token));
+
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+
+        var cookie=new Cookie("refreshToken",refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/auth/refresh");
+        cookie.setMaxAge(604800); // 7d
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(new JwtResponse(accessToken));
     }
 
     /*the @AuthenticationPrincipal annotation is used to inject the currently authenticated
