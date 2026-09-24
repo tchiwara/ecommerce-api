@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         //at this point the token is correct hence we need to tell spring that the user is authenticated
         //UsernamePasswordAuthenticationToken used for both authenticated and anonymous users via its constructors
         var authentication=new UsernamePasswordAuthenticationToken(
-            jwtService.getEmailFromToken(token),
+            jwtService.getUserIdFromToken(token),
                 null,
                 null
         );
