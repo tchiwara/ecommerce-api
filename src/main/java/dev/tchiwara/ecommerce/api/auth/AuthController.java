@@ -2,6 +2,7 @@ package dev.tchiwara.ecommerce.api.auth;
 
 import dev.tchiwara.ecommerce.api.auth.dtos.JwtResponse;
 import dev.tchiwara.ecommerce.api.auth.dtos.LoginRequest;
+import dev.tchiwara.ecommerce.api.config.JwtConfig;
 import dev.tchiwara.ecommerce.api.user.UserMapper;
 import dev.tchiwara.ecommerce.api.user.UserRepository;
 import dev.tchiwara.ecommerce.api.user.dtos.UserResponseDTO;
@@ -24,6 +25,7 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final JwtConfig jwtConfig;
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> loginRequest(
@@ -45,7 +47,7 @@ public class AuthController {
         var cookie=new Cookie("refreshToken",refreshToken);
         cookie.setHttpOnly(true);
         cookie.setPath("/auth");
-        cookie.setMaxAge(604800); // 7d
+        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
         cookie.setSecure(true);
         response.addCookie(cookie);
 
