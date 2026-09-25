@@ -39,19 +39,8 @@ public class User {
     @Generated(event = {EventType.INSERT, EventType.UPDATE})
     private Instant updatedAt;
 
-    /*
-     * insertable = false:
-     * Hibernate will not include this field in SQL INSERT statements.
-     *
-     * updatable = false:
-     * Hibernate will not include this field in SQL UPDATE statements.
-     *
-     * Both timestamps are managed by the database:
-     * - created_at uses DEFAULT CURRENT_TIMESTAMP
-     * - updated_at uses DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-     *
-     * Hibernate only reads these values from the database.
-     */
-
+    @Column(name ="role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
 }
