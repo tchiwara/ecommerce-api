@@ -9,11 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +24,7 @@ public class UserService {
 
         User user=userMapper.toEntity(userRegisterRequestDTO);
         user.setPasswordHash(passwordEncoder.encode(userRegisterRequestDTO.getPassword()));
+        user.setRole(Role.CUSTOMER);
         var savedUser= userRepository.save(user);
 
         return  userMapper.toDto(savedUser);
@@ -74,8 +72,4 @@ public class UserService {
                 );
         userRepository.delete(user);
     }
-
-
-
-
 }
