@@ -5,9 +5,7 @@ import dev.tchiwara.ecommerce.api.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -26,11 +24,15 @@ public class JwtService {
         return generateToken(user, jwtConfig.getRefreshTokenExpiration());
     }
 
+    // NOTE: role is embedded in the token at issuance time, not looked up fresh per request.
+// If an admin changes a user's role, the change won't take effect until this access
+// token expires and the client refreshes (max wait = accessTokenExpiration).
     private String generateToken(User user, long tokenExpiration) {
         return Jwts.builder()
                 .subject(user.getId().toString())
                 .claim("email", user.getEmail())
                 .claim("name", user.getName())
+                .claim("role", user.getRole())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
                 .signWith(jwtConfig.getSecretKey())
@@ -61,5 +63,4 @@ public class JwtService {
         return Long.valueOf(getClaims(token).getSubject());
 
     }
-
 }
