@@ -1,6 +1,7 @@
 package dev.tchiwara.ecommerce.api.auth;
 
 import dev.tchiwara.ecommerce.api.config.JwtConfig;
+import dev.tchiwara.ecommerce.api.user.Role;
 import dev.tchiwara.ecommerce.api.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -61,6 +62,11 @@ public class JwtService {
 
     public Long getUserIdFromToken(String token){
         return Long.valueOf(getClaims(token).getSubject());
+
+    }
+
+    public Role getRoleFromToken(String token){
+        return Role.valueOf(getClaims(token).get("role", String.class));
 
     }
 }
