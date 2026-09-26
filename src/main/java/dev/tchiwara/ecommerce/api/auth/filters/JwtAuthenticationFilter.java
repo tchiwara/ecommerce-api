@@ -6,11 +6,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -37,10 +39,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         //at this point the token is correct hence we need to tell spring that the user is authenticated
         //UsernamePasswordAuthenticationToken used for both authenticated and anonymous users via its constructors
+        var role=jwtService.getRoleFromToken(token);
+        var userId=jwtService.getUserIdFromToken(token);
         var authentication=new UsernamePasswordAuthenticationToken(
-            jwtService.getUserIdFromToken(token),
+                userId,
                 null,
-                null
+                List.of(new SimpleGrantedAuthority("ROLE_" + role))
         );
 
         // Attach request metadata to the authentication; not the user's identity or permissions.
