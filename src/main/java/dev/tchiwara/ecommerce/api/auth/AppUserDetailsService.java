@@ -2,13 +2,13 @@ package dev.tchiwara.ecommerce.api.auth;
 
 import dev.tchiwara.ecommerce.api.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,11 +25,10 @@ public class AppUserDetailsService implements UserDetailsService {
         return new User(
                 user.getEmail(),
                 user.getPasswordHash(),
-                Collections.emptyList()
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
         );
     }
 }
 
-/*
-* In Java, an interface is a contract, and a class is the execution of that contract.
-* */
+//In Java, an interface is a contract, and a class is the execution of that contract.
+
