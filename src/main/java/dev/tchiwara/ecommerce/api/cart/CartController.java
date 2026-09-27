@@ -6,6 +6,7 @@ import dev.tchiwara.ecommerce.api.cart.dtos.UpdateQuantityRequestDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class CartController {
 
     @PostMapping("/items")
     public ResponseEntity<CartResponseDTO> addItem(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal Long userId,
             @Valid @RequestBody AddItemRequestDTO request
     ) {
         return ResponseEntity.ok(cartService.addItem(userId, request));
@@ -25,14 +26,14 @@ public class CartController {
 
     @GetMapping
     public ResponseEntity<CartResponseDTO> getCart(
-            @RequestHeader("X-User-Id") Long userId) {
+            @AuthenticationPrincipal Long userId) {
 
         return ResponseEntity.ok(cartService.getCart(userId));
     }
 
     @PutMapping("/items/{productId}")
     public ResponseEntity<CartResponseDTO> updateQuantity(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal Long userId,
             @PathVariable Long productId,
             @Valid @RequestBody UpdateQuantityRequestDTO request
     ) {
@@ -41,7 +42,7 @@ public class CartController {
 
     @DeleteMapping("/items/{productId}")
     public ResponseEntity<CartResponseDTO> removeItem(
-            @RequestHeader("X-User-Id") Long userId,
+            @AuthenticationPrincipal Long userId,
             @PathVariable Long productId
     ) {
         return ResponseEntity.ok(cartService.removeItem(userId, productId));
