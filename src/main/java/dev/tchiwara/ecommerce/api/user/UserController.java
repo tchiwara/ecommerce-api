@@ -54,6 +54,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal")
     public ResponseEntity<UserResponseDTO> updateUser(
             @Valid @RequestBody UserUpdateRequestDTO userUpdateRequestDTO,
             @PathVariable Long id
