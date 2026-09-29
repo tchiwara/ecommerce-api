@@ -15,5 +15,32 @@ spring:
     refreshTokenExpiration: 604800
   config:
     import: optional:file:.env[.properties]
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+  data:
+    redis:
+      host: localhost
+      port: 6379
+app:
+  otp:
+    secret: ${OTP_SECRET}
+    ttl-minutes: 10
+    max-attempts: 5
+    resend-cooldown-seconds: 60
+    hourly-limit: 5
+
+
 
 
