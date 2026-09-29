@@ -43,4 +43,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "email_verified")
+    private boolean emailVerified;
+
 }
