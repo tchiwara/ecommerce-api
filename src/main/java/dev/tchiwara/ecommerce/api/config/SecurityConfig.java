@@ -61,6 +61,8 @@ public class SecurityConfig {
 
         .authorizeHttpRequests(
                 auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/auth/resend-otp").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/verify-otp").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
