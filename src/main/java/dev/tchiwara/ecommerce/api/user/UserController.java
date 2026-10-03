@@ -1,5 +1,6 @@
 package dev.tchiwara.ecommerce.api.user;
 
+import dev.tchiwara.ecommerce.api.auth.dtos.RegistrationResponseDTO;
 import dev.tchiwara.ecommerce.api.user.dtos.UserRegisterRequestDTO;
 import dev.tchiwara.ecommerce.api.user.dtos.UserResponseDTO;
 import dev.tchiwara.ecommerce.api.user.dtos.UserUpdateRequestDTO;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/users")
@@ -23,18 +23,9 @@ public class UserController {
     private  final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> registerUser(
-            @Valid @RequestBody UserRegisterRequestDTO userRegisterRequestDTO,
-            UriComponentsBuilder uriBuilder
-            ){
-
-        UserResponseDTO response=userService.registerUser(userRegisterRequestDTO);
-        var uri=uriBuilder
-                .path("/{id}")
-                .buildAndExpand(response.getId())
-                .toUri();
-
-        return ResponseEntity.created(uri).body(response);
+    public ResponseEntity<RegistrationResponseDTO> registerUser(
+            @Valid @RequestBody UserRegisterRequestDTO userRegisterRequestDTO) {
+        return ResponseEntity.accepted().body(userService.registerUser(userRegisterRequestDTO));
     }
 
     @GetMapping
