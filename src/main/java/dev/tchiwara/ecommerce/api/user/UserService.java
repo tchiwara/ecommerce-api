@@ -1,5 +1,7 @@
 package dev.tchiwara.ecommerce.api.user;
 
+import dev.tchiwara.ecommerce.api.auth.dtos.RegistrationResponseDTO;
+import dev.tchiwara.ecommerce.api.auth.otp.EmailVerificationService;
 import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import dev.tchiwara.ecommerce.api.user.dtos.UserRegisterRequestDTO;
 import dev.tchiwara.ecommerce.api.user.dtos.UserResponseDTO;
@@ -19,16 +21,15 @@ public class UserService {
     private final  UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmailVerificationService emailVerificationService;
 
-    public UserResponseDTO registerUser (UserRegisterRequestDTO userRegisterRequestDTO){
+    public RegistrationResponseDTO registerUser(UserRegisterRequestDTO dto) {
 
-        User user=userMapper.toEntity(userRegisterRequestDTO);
-        user.setPasswordHash(passwordEncoder.encode(userRegisterRequestDTO.getPassword()));
-        user.setRole(Role.CUSTOMER);
-        var savedUser= userRepository.save(user);
+        String registrationId = emailVerificationService.startRegistration(
+                dto.getName(), dto.getEmail(), dto.getPassword());
 
-        return  userMapper.toDto(savedUser);
-
+        return new RegistrationResponseDTO(
+                registrationId, "Check your email for a verification code.");
     }
 
     public Page<UserResponseDTO> getAllUsers(
