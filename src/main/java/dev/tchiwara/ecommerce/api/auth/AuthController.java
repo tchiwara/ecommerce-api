@@ -2,6 +2,9 @@ package dev.tchiwara.ecommerce.api.auth;
 
 import dev.tchiwara.ecommerce.api.auth.dtos.JwtResponse;
 import dev.tchiwara.ecommerce.api.auth.dtos.LoginRequest;
+import dev.tchiwara.ecommerce.api.auth.dtos.ResendOtpRequestDTO;
+import dev.tchiwara.ecommerce.api.auth.dtos.VerifyOtpRequestDTO;
+import dev.tchiwara.ecommerce.api.auth.otp.EmailVerificationService;
 import dev.tchiwara.ecommerce.api.config.JwtConfig;
 import dev.tchiwara.ecommerce.api.user.UserMapper;
 import dev.tchiwara.ecommerce.api.user.UserRepository;
@@ -17,6 +20,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -27,6 +32,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final JwtConfig jwtConfig;
+    private final EmailVerificationService emailVerificationService;
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> loginRequest(
@@ -41,6 +47,11 @@ public class AuthController {
         );
 
         var user= userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+
+        if (!user.isEmailVerified()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
 
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -77,6 +88,21 @@ public class AuthController {
         if(user==null) return ResponseEntity.notFound().build();
         var userDto=userMapper.toDto(user);
         return ResponseEntity.ok(userDto);
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<Map<String, String>> resendOtp(@Valid @RequestBody ResendOtpRequestDTO request) {
+        emailVerificationService.resendOtp(request.getRegistrationId());
+        return ResponseEntity.accepted().body(Map.of("message", "If eligible, a new code has been sent."));
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<Map<String, String>> verifyOtp(@Valid @RequestBody VerifyOtpRequestDTO request) {
+        boolean verified = emailVerificationService.verifyRegistration(
+                request.getRegistrationId(), request.getCode());
+        return verified
+                ? ResponseEntity.ok(Map.of("message", "Email verified. Account created."))
+                : ResponseEntity.badRequest().body(Map.of("message", "Invalid or expired code"));
     }
 
 }
