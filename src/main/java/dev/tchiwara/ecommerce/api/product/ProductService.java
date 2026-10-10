@@ -3,6 +3,7 @@ package dev.tchiwara.ecommerce.api.product;
 import dev.tchiwara.ecommerce.api.category.Category;
 import dev.tchiwara.ecommerce.api.category.CategoryRepository;
 import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
+import dev.tchiwara.ecommerce.api.product.dtos.CreateProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +21,13 @@ private final  ProductRepository productRepository;
 private final ProductMapper productMapper;
     private final CategoryRepository categoryRepository;
 
-    public ProductResponseDTO createProduct(ProductRequestDTO productRequestDTO) {
+    public ProductResponseDTO createProduct(CreateProductRequestDTO createProductRequestDTO) {
 
-    var category=categoryRepository.findById(productRequestDTO.getCategoryId())
+    var category=categoryRepository.findById(createProductRequestDTO.getCategoryId())
             .orElseThrow(
-                    ()-> new ResourceNotFoundException("Category of id "+productRequestDTO.getCategoryId()+" not found!")
+                    ()-> new ResourceNotFoundException("Category of id "+createProductRequestDTO.getCategoryId()+" not found!")
             );
-    Product product=productMapper.toEntity(productRequestDTO);
+    Product product=productMapper.toEntity(createProductRequestDTO);
     product.setCategory(category);
     var savedProduct=productRepository.save(product);
 
