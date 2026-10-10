@@ -1,5 +1,6 @@
 package dev.tchiwara.ecommerce.api.product;
 
+import dev.tchiwara.ecommerce.api.product.dtos.CreateProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductResponseDTO;
 import jakarta.validation.Valid;
@@ -22,10 +23,10 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductResponseDTO> addProduct(
-          @Valid @RequestBody ProductRequestDTO productRequestDTO,
+          @Valid @RequestBody CreateProductRequestDTO createProductRequestDTO,
           UriComponentsBuilder uriBuilder
     ){
-        ProductResponseDTO response=productService.createProduct(productRequestDTO);
+        ProductResponseDTO response=productService.createProduct(createProductRequestDTO);
 
         var uri=uriBuilder
                 .path("/{id}")
