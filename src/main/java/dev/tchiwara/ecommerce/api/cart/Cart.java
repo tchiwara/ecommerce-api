@@ -110,6 +110,10 @@ public class Cart {
         cartItems.remove(item);
     }
 
+    public void clear() {
+        cartItems.clear();
+    }
+
 }
 
 
