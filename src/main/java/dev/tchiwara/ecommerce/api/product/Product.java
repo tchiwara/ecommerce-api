@@ -32,4 +32,7 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @Column(name = "stock_quantity", nullable = false)
+    private int stockQuantity;
+
 }
