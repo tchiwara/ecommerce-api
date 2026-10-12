@@ -3,6 +3,7 @@ package dev.tchiwara.ecommerce.api.product;
 import dev.tchiwara.ecommerce.api.product.dtos.CreateProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductResponseDTO;
+import dev.tchiwara.ecommerce.api.product.dtos.StockAdjustmentRequestDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,14 @@ public class ProductController {
     ){
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/stock")
+    public ResponseEntity<ProductResponseDTO> adjustStock(
+            @PathVariable Long id,
+            @Valid @RequestBody StockAdjustmentRequestDTO request
+    ){
+        return ResponseEntity.ok(productService.adjustStock(id, request.getDelta()));
     }
 
 }
