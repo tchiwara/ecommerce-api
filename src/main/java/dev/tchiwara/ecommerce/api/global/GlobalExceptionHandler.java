@@ -4,6 +4,7 @@ import dev.tchiwara.ecommerce.api.cart.ItemNotInCartException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -69,4 +70,30 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", "Email already registered"));
     }
 
+    @ExceptionHandler(EmptyCartException.class)
+    public ResponseEntity<Map<String, String>> handleEmptyCart(
+            EmptyCartException exception
+    ){
+        var error = new HashMap<String, String>();
+        error.put("message", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler({InsufficientStockException.class, PriceChangedException.class})
+    public ResponseEntity<Map<String, String>> handleCheckoutConflict(
+            RuntimeException exception
+    ){
+        var error = new HashMap<String, String>();
+        error.put("message", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<Map<String, String>> handleConcurrentModification(
+            ObjectOptimisticLockingFailureException exception
+    ){
+        var error = new HashMap<String, String>();
+        error.put("message", "Your cart changed during checkout. Please retry.");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
 }
