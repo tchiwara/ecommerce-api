@@ -2,6 +2,7 @@ package dev.tchiwara.ecommerce.api.product;
 
 import dev.tchiwara.ecommerce.api.category.Category;
 import dev.tchiwara.ecommerce.api.category.CategoryRepository;
+import dev.tchiwara.ecommerce.api.global.InsufficientStockException;
 import dev.tchiwara.ecommerce.api.global.ResourceNotFoundException;
 import dev.tchiwara.ecommerce.api.product.dtos.CreateProductRequestDTO;
 import dev.tchiwara.ecommerce.api.product.dtos.ProductRequestDTO;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -78,6 +80,21 @@ private final ProductMapper productMapper;
                         () -> new ResourceNotFoundException("Product with id " + id + " not found")
                 );
         productRepository.delete(product);
+    }
+
+
+    @Transactional
+    public ProductResponseDTO adjustStock(Long id, int delta) {
+        if (!productRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Product with id " + id + " not found");
+        }
+        if (delta > 0) {
+            productRepository.incrementStock(id, delta);
+        } else if (delta < 0 && productRepository.decrementStock(id, -delta) == 0) {
+            throw new InsufficientStockException("product " + id);
+        }
+        var product = productRepository.findById(id).orElseThrow();
+        return productMapper.toDTO(product);
     }
 
 
