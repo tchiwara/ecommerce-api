@@ -18,82 +18,140 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String,   String>> handleValidationErrors(
+    public ResponseEntity<Map<String, String>> handleValidationErrors(
             MethodArgumentNotValidException exception
-    ){
-        var errors=new HashMap<String, String>();
-        exception.getBindingResult().getFieldErrors().forEach(error->{
-            errors.put(error.getField(),error.getDefaultMessage());
-        });
+    ) {
+        var errors = new HashMap<String, String>();
+
+        exception.getBindingResult()
+                .getFieldErrors()
+                .forEach(error ->
+                        errors.put(
+                                error.getField(),
+                                error.getDefaultMessage()
+                        )
+                );
 
         return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String,   String>> handleResourceNotFound(
+    public ResponseEntity<Map<String, String>> handleResourceNotFound(
             ResourceNotFoundException exception
-    ){
-        var error=new HashMap<String, String>();
-        error.put("message",exception.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    ) {
+        var error = new HashMap<String, String>();
+        error.put("message", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<Map<String, String>> handleTypeMismatch(
+            MethodArgumentTypeMismatchException exception
+    ) {
         var error = new HashMap<String, String>();
-        error.put("message", "Invalid value '" + ex.getValue() + "' for parameter: " + ex.getName());
+        error.put(
+                "message",
+                "Invalid value '" + exception.getValue()
+                        + "' for parameter: " + exception.getName()
+        );
+
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleConstraintViolation(ConstraintViolationException ex) {
+    public ResponseEntity<Map<String, String>> handleConstraintViolation(
+            ConstraintViolationException exception
+    ) {
         var error = new HashMap<String, String>();
-        error.put("message", ex.getMessage());
+        error.put("message", exception.getMessage());
+
         return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(ItemNotInCartException.class)
-    public ResponseEntity<Map<String, String>> handleItemNotInCart(ItemNotInCartException exception) {
+    public ResponseEntity<Map<String, String>> handleItemNotInCart(
+            ItemNotInCartException exception
+    ) {
         var error = new HashMap<String, String>();
         error.put("message", exception.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Void> handleBadCredentialsException(BadCredentialsException ex){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<Void> handleBadCredentialsException(
+            BadCredentialsException exception
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .build();
     }
 
     @ExceptionHandler(EmailAlreadyRegisteredException.class)
-    public ResponseEntity<Map<String, String>> handleEmailAlreadyRegistered(EmailAlreadyRegisteredException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+    public ResponseEntity<Map<String, String>> handleEmailAlreadyRegistered(
+            EmailAlreadyRegisteredException exception
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(Map.of("message", "Email already registered"));
     }
 
     @ExceptionHandler(EmptyCartException.class)
     public ResponseEntity<Map<String, String>> handleEmptyCart(
             EmptyCartException exception
-    ){
+    ) {
         var error = new HashMap<String, String>();
         error.put("message", exception.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
     }
 
-    @ExceptionHandler({InsufficientStockException.class, PriceChangedException.class})
+    @ExceptionHandler({
+            InsufficientStockException.class,
+            PriceChangedException.class
+    })
     public ResponseEntity<Map<String, String>> handleCheckoutConflict(
             RuntimeException exception
-    ){
+    ) {
         var error = new HashMap<String, String>();
         error.put("message", exception.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+    }
+
+    @ExceptionHandler(IllegalOrderStateException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalOrderState(
+            IllegalOrderStateException exception
+    ) {
+        var error = new HashMap<String, String>();
+        error.put("message", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
     }
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
     public ResponseEntity<Map<String, String>> handleConcurrentModification(
             ObjectOptimisticLockingFailureException exception
-    ){
+    ) {
         var error = new HashMap<String, String>();
-        error.put("message", "Your cart changed during checkout. Please retry.");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        error.put(
+                "message",
+                "The resource was modified by another request. Please retry."
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
     }
 }
