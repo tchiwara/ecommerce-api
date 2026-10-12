@@ -46,7 +46,7 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
-    BigDecimal subtotal() {
+    public BigDecimal subtotal() {
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 }
