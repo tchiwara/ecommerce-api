@@ -7,8 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,21 +20,49 @@ public class OrderController {
     private final OrderMapper orderMapper;
 
     @PostMapping("/checkout")
-    public ResponseEntity<OrderResponseDTO> checkout(Authentication authentication) {
+    public OrderResponseDTO checkout(Authentication authentication) {
         Order order = checkoutService.checkout(currentUserId(authentication));
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderMapper.toResponse(order));
+        return orderMapper.toResponse(order);
     }
 
     @GetMapping
     public PagedModel<OrderSummaryResponseDTO> list(
             Authentication authentication,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return new PagedModel<>(orderService.listOrders(currentUserId(authentication), pageable));
+            @PageableDefault(
+                    size = 10,
+                    sort = "createdAt",
+                    direction = Sort.Direction.DESC
+            )
+            Pageable pageable
+    ) {
+        return new PagedModel<>(
+                orderService.listOrders(
+                        currentUserId(authentication),
+                        pageable
+                )
+        );
     }
 
     @GetMapping("/{id}")
-    public OrderResponseDTO get(Authentication authentication, @PathVariable Long id) {
-        return orderService.getOrder(currentUserId(authentication), id);
+    public OrderResponseDTO get(
+            Authentication authentication,
+            @PathVariable Long id
+    ) {
+        return orderService.getOrder(
+                currentUserId(authentication),
+                id
+        );
+    }
+
+    @PostMapping("/{id}/cancel")
+    public OrderResponseDTO cancel(
+            Authentication authentication,
+            @PathVariable Long id
+    ) {
+        return orderService.cancelOrder(
+                currentUserId(authentication),
+                id
+        );
     }
 
     private Long currentUserId(Authentication authentication) {
