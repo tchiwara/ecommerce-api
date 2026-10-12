@@ -1,5 +1,6 @@
 package dev.tchiwara.ecommerce.api.order;
 
+import dev.tchiwara.ecommerce.api.global.IllegalOrderStateException;
 import dev.tchiwara.ecommerce.api.product.Product;
 import dev.tchiwara.ecommerce.api.user.User;
 import jakarta.persistence.*;
@@ -37,16 +38,23 @@ public class Order {
     @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "order",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<OrderItem> items = new ArrayList<>();
 
     @Generated(event = EventType.INSERT)
     @Column(name = "created_at", insertable = false, updatable = false)
     private Instant createdAt;
 
-    @Generated(event = { EventType.INSERT, EventType.UPDATE })
+    @Generated(event = {EventType.INSERT, EventType.UPDATE})
     @Column(name = "updated_at", insertable = false, updatable = false)
     private Instant updatedAt;
+
+    @Version
+    private long version;
 
     public static Order place(User user) {
         Order order = new Order();
@@ -63,6 +71,25 @@ public class Order {
 
     public List<OrderItem> getItems() {
         return Collections.unmodifiableList(items);
+    }
+
+    public void cancel() {
+        requirePending("cancelled");
+        status = OrderStatus.CANCELLED;
+    }
+
+    public void markPaid() {
+        requirePending("paid");
+        status = OrderStatus.PAID;
+    }
+
+    private void requirePending(String action) {
+        if (status != OrderStatus.PENDING) {
+            throw new IllegalOrderStateException(
+                    "Order %d is %s and cannot be %s"
+                            .formatted(id, status, action)
+            );
+        }
     }
 
     private void recalculateTotal() {
