@@ -3,7 +3,19 @@ package dev.tchiwara.ecommerce.api.order;
 import dev.tchiwara.ecommerce.api.global.IllegalOrderStateException;
 import dev.tchiwara.ecommerce.api.product.Product;
 import dev.tchiwara.ecommerce.api.user.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,7 +52,7 @@ public class Order {
 
     @OneToMany(
             mappedBy = "order",
-            cascade = CascadeType.ALL,
+            cascade = jakarta.persistence.CascadeType.ALL,
             orphanRemoval = true
     )
     private List<OrderItem> items = new ArrayList<>();
@@ -55,6 +67,18 @@ public class Order {
 
     @Version
     private long version;
+
+    @Column(name = "stripe_session_id", unique = true, length = 255)
+    private String stripeSessionId;
+
+    @Column(name = "stripe_payment_intent_id", length = 255)
+    private String stripePaymentIntentId;
+
+    @Column(name = "paid_at")
+    private Instant paidAt;
+
+    @Column(name = "confirmation_email_sent_at")
+    private Instant confirmationEmailSentAt;
 
     public static Order place(User user) {
         Order order = new Order();
@@ -73,14 +97,42 @@ public class Order {
         return Collections.unmodifiableList(items);
     }
 
+    public void attachStripeSession(String stripeSessionId) {
+        if (stripeSessionId == null || stripeSessionId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Stripe session ID cannot be blank"
+            );
+        }
+
+        this.stripeSessionId = stripeSessionId;
+    }
+
+    public void markPaid(
+            String stripeSessionId,
+            String stripePaymentIntentId
+    ) {
+        requirePending("paid");
+
+        this.status = OrderStatus.PAID;
+        this.stripeSessionId = stripeSessionId;
+        this.stripePaymentIntentId = stripePaymentIntentId;
+        this.paidAt = Instant.now();
+    }
+
     public void cancel() {
         requirePending("cancelled");
         status = OrderStatus.CANCELLED;
     }
 
-    public void markPaid() {
-        requirePending("paid");
-        status = OrderStatus.PAID;
+    public void expire() {
+        requirePending("expired");
+        status = OrderStatus.EXPIRED;
+    }
+
+    public void markConfirmationEmailSent() {
+        if (confirmationEmailSentAt == null) {
+            confirmationEmailSentAt = Instant.now();
+        }
     }
 
     private void requirePending(String action) {
