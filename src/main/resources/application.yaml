@@ -1,20 +1,26 @@
 spring:
   application:
     name: ecommerce.api
+
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
   jpa:
     show-sql: true
+
   flyway:
     enabled: true
+
   jwt:
     secret: ${JWT_SECRET}
-    accessTokenExpiration: 900 #15mins
+    accessTokenExpiration: 3600
     refreshTokenExpiration: 604800
+
   config:
     import: optional:file:.env[.properties]
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -29,10 +35,19 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+
   data:
     redis:
       host: localhost
       port: 6379
+
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET}
+  success-url: ${STRIPE_SUCCESS_URL}
+  cancel-url: ${STRIPE_CANCEL_URL}
+  currency: ${STRIPE_CURRENCY:usd}
+
 app:
   otp:
     secret: ${OTP_SECRET}
@@ -40,7 +55,3 @@ app:
     max-attempts: 5
     resend-cooldown-seconds: 60
     hourly-limit: 5
-
-
-
-
