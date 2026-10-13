@@ -1,6 +1,7 @@
 package dev.tchiwara.ecommerce.api.global;
 
 import dev.tchiwara.ecommerce.api.cart.ItemNotInCartException;
+import dev.tchiwara.ecommerce.api.payment.StripePaymentException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,9 @@ public class GlobalExceptionHandler {
                         )
                 );
 
-        return ResponseEntity.badRequest().body(errors);
+        return ResponseEntity
+                .badRequest()
+                .body(errors);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -52,13 +55,16 @@ public class GlobalExceptionHandler {
             MethodArgumentTypeMismatchException exception
     ) {
         var error = new HashMap<String, String>();
+
         error.put(
                 "message",
                 "Invalid value '" + exception.getValue()
                         + "' for parameter: " + exception.getName()
         );
 
-        return ResponseEntity.badRequest().body(error);
+        return ResponseEntity
+                .badRequest()
+                .body(error);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -68,7 +74,9 @@ public class GlobalExceptionHandler {
         var error = new HashMap<String, String>();
         error.put("message", exception.getMessage());
 
-        return ResponseEntity.badRequest().body(error);
+        return ResponseEntity
+                .badRequest()
+                .body(error);
     }
 
     @ExceptionHandler(ItemNotInCartException.class)
@@ -93,7 +101,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailAlreadyRegisteredException.class)
-    public ResponseEntity<Map<String, String>> handleEmailAlreadyRegistered(
+    public ResponseEntity<Map<String, String>>
+    handleEmailAlreadyRegistered(
             EmailAlreadyRegisteredException exception
     ) {
         return ResponseEntity
@@ -140,14 +149,31 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
+    @ExceptionHandler(StripePaymentException.class)
+    public ResponseEntity<Map<String, String>> handleStripePayment(
+            StripePaymentException exception
+    ) {
+        var error = new HashMap<String, String>();
+        error.put(
+                "message",
+                "The payment provider could not process the request."
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(error);
+    }
+
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-    public ResponseEntity<Map<String, String>> handleConcurrentModification(
+    public ResponseEntity<Map<String, String>>
+    handleConcurrentModification(
             ObjectOptimisticLockingFailureException exception
     ) {
         var error = new HashMap<String, String>();
         error.put(
                 "message",
-                "The resource was modified by another request. Please retry."
+                "The resource was modified by another request. " +
+                        "Please retry."
         );
 
         return ResponseEntity
