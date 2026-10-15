@@ -55,3 +55,21 @@ app:
     max-attempts: 5
     resend-cooldown-seconds: 60
     hourly-limit: 5
+
+  rate-limit:
+    enabled: true
+    key-prefix: "ecom:rl:"
+    window-seconds: 60
+    trusted-proxy: false
+
+    strict:
+      login-limit: 10
+      registration-limit: 5
+      otp-send-limit: 5
+      otp-verify-limit: 10
+
+    moderate:
+      authenticated-limit: 120
+
+    loose:
+      public-get-limit: 300
