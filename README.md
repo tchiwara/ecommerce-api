@@ -6,20 +6,43 @@ A Spring Boot e-commerce backend built as a deep dive into backend engineering: 
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    Client["Client / Swagger UI"] --> API["Spring Boot REST API"]
+The architecture diagrams live in the `architecture/` folder.
 
-    API --> Security["Spring Security (JWT Authentication)"]
-    API --> MySQL[("MySQL 8")]
-    API --> Redis[("Redis 7")]
-    API --> Flyway["Flyway Migrations"]
-    API --> Stripe["Stripe API"]
-    API --> Mail["SMTP Mail Server"]
+### System overview
 
-    Flyway --> MySQL
-    StripeWebhook["Stripe Webhook"] --> API
-```
+External clients connect to the Spring Boot API, which integrates with MySQL, Redis, Flyway, Stripe, SMTP, and Stripe webhooks.
+
+![System overview](architecture/system-overview.png)
+
+### Authentication and registration flow
+
+Registration, Redis-backed OTP verification, email delivery, login, and JWT issuance.
+
+![Authentication and registration flow](architecture/authentication-registration-flow.png)
+
+### Security and request flow
+
+Rate limiting, JWT authentication, role checks, controllers, services, and repositories.
+
+![Security and request flow](architecture/security-request-flow.png)
+
+### Checkout and payment flow
+
+Cart checkout, stock validation, order creation, Stripe Checkout, webhook verification, payment status updates, and confirmation email delivery.
+
+![Checkout and payment flow](architecture/checkout-payment-flow.png)
+
+### Database schema
+
+The final database tables and relationships defined by the Flyway migrations.
+
+![Database schema](architecture/database-schema.png)
+
+### Docker Compose deployment
+
+The API, MySQL, and Redis containers, MySQL data volume, and Stripe CLI webhook forwarding.
+
+![Docker Compose deployment](architecture/docker-compose-deployment.png)
 
 ## Tech stack
 
@@ -101,13 +124,13 @@ docker compose up -d
 ### 4. Try the full flow in Swagger UI
 
 1. Call `POST /users` to register.
-2. Verify the OTP sent to your email.
+2. Call `POST /auth/verify-otp` to verify the OTP sent to your email.
 3. Call `POST /auth/login`.
 4. Copy the access token.
 5. Click **Authorize** in Swagger UI and paste the token.
 6. Add products to the cart with `POST /cart/items`.
 7. Call `POST /orders/checkout` to create an order.
-8. Call the payment-session endpoint to receive a Stripe Checkout URL.
+8. Call `POST /orders/{id}/payment-session` to receive a Stripe Checkout URL.
 9. Open the Checkout URL in your browser.
 10. Pay with Stripe's test card:
 
