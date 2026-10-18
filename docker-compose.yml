@@ -37,5 +37,4 @@ services:
 
 volumes:
   mysql-data:
-    external: true
     name: ecommerce-mysql-data
